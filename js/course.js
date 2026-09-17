@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const STORAGE_KEY = "ku_itph_trainer_v2";
+  const STORAGE_KEY = "ku_itph_trainer_v3";
   const KU_STORAGE_KEY = "ku::itph-trainer";
 
   function clearVariableFields() {
@@ -51,13 +51,26 @@
   const chapterNames = {
     calc: "Посчитать ITPH по периодам",
     situations: "Разобрать ситуации",
-    finish: "Забрать алгоритм"
+    finish: "Собрать алгоритм"
   };
   const situationFeedback = {
     overload: "Высокий ITPH вместе с очередью и отставанием кухни указывает на перегрузку. Определи западающую зону и скорректируй расстановку.",
     underload: "Нагрузка ниже плана и очереди нет. Перераспредели людей и используй освободившееся время с пользой.",
-    quality: "Нормальный ITPH не исключает проблем с качеством. Проверь процесс приготовления, сборки и соблюдение стандартов."
+    quality: "Нормальный ITPH не исключает проблем с качеством. Проверь процесс приготовления, сборки и соблюдение стандартов.",
+    absence: "Сначала обеспечь работу участков силами обученных сотрудников и организуй замену. Учитывай фактические часы вышедших людей, затем проверь очередь и нагрузку.",
+    equipment: "Причина задержек — оборудование. Прекрати его использование, сообщи ответственному по принятому порядку и организуй работу на исправном оборудовании с учётом его мощности.",
+    trainee: "Новичку нужны показ стандарта и помощь опытного сотрудника. Проверь следующие заказы: одинаковый с планом ITPH не гарантирует правильную сборку."
   };
+  const periodCount = document.querySelectorAll(".period-row").length;
+  const situationCount = Object.keys(situationFeedback).length;
+  const actionSteps = {
+    calculate: "Посчитать ITPH по фактическим блюдам и часам сотрудников за выбранный период.",
+    compare: "Сопоставить ITPH с планом и динамикой предыдущих периодов.",
+    observe: "Проверить очередь, качество и загрузку рабочих участков; определить причину задержки.",
+    act: "Устранить найденную причину: скорректировать расстановку или организовать помощь.",
+    review: "Через 30 минут проверить ITPH, ожидание и качество; при необходимости скорректировать решение."
+  };
+  const correctOrder = Object.keys(actionSteps);
   const originalNavigate = window.kuNavigate;
   let state = loadState();
 
@@ -70,6 +83,8 @@
       calcRowAttempts: {},
       situations: [],
       attempts: {},
+      order: ["act", "calculate", "review", "observe", "compare"],
+      orderDone: false,
       completed: false
     };
     try {
@@ -77,18 +92,18 @@
       if (!saved) return fresh;
       const done = chapters.map((_, index) => Boolean(saved.done && saved.done[index]));
       const savedCalcRows = Array.isArray(saved.calcRows)
-        ? [...new Set(saved.calcRows.map(Number).filter(index => index >= 0 && index < 3))]
+        ? [...new Set(saved.calcRows.map(Number).filter(index => Number.isInteger(index) && index >= 0 && index < periodCount))]
         : [];
       return {
         unlocked: Math.min(Math.max(Number(saved.unlocked) || 1, 1), chapters.length),
         done,
-        calcRows: savedCalcRows.length ? savedCalcRows : (done[0] ? [0, 1, 2] : []),
+        calcRows: savedCalcRows,
         calcRevealed: Array.isArray(saved.calcRevealed)
-          ? [...new Set(saved.calcRevealed.map(Number).filter(index => index >= 0 && index < 3))]
-          : (Number(saved.calcAttempts) >= 3 ? [0, 1, 2] : []),
+          ? [...new Set(saved.calcRevealed.map(Number).filter(index => Number.isInteger(index) && index >= 0 && index < periodCount))]
+          : [],
         calcRowAttempts: Object.fromEntries(
           Object.entries(saved.calcRowAttempts || {})
-            .filter(([index]) => ["0", "1", "2"].includes(String(index)))
+            .filter(([index]) => Number.isInteger(Number(index)) && Number(index) >= 0 && Number(index) < periodCount)
             .map(([index, count]) => [index, Math.min(Math.max(Number(count) || 0, 0), 3)])
         ),
         situations: Array.isArray(saved.situations) ? saved.situations.filter(id => situationFeedback[id]) : [],
@@ -97,7 +112,9 @@
             .filter(([id]) => situationFeedback[id])
             .map(([id, count]) => [id, Math.min(Math.max(Number(count) || 0, 0), 3)])
         ),
-        completed: Boolean(saved.completed)
+        order: Array.isArray(saved.order) && saved.order.length === correctOrder.length && new Set(saved.order).size === correctOrder.length && saved.order.every(id => correctOrder.includes(id)) ? saved.order : fresh.order,
+        orderDone: Boolean(saved.orderDone),
+        completed: Boolean(saved.completed && saved.orderDone)
       };
     } catch (error) {
       return fresh;
@@ -125,6 +142,7 @@
     if (situationsNext) situationsNext.disabled = !state.done[1];
     restoreCalculation();
     restoreSituations();
+    restoreOrder();
     if (state.completed) showCompleted();
   }
 
@@ -172,7 +190,7 @@
 
   function setPeriodFieldsLocked(row, locked) {
     row.querySelector(".period-value").readOnly = locked;
-    row.querySelector(".period-logic").readOnly = locked;
+    row.querySelector(".period-logic").disabled = locked;
   }
 
   function setSavedFieldValue(field, value) {
@@ -201,11 +219,12 @@
       row.classList.toggle("revealed", revealed);
       row.classList.remove("incorrect");
       setPeriodFieldsLocked(row, completed || locked);
-      if (revealed) revealPeriodAnswer(row);
+      if (completed) revealPeriodAnswer(row);
+      updateSelectedText(row.querySelector(".period-logic"));
     });
 
     const counter = document.getElementById("calc-period-count");
-    if (counter) counter.textContent = state.calcRows.length + " / 3";
+    if (counter) counter.textContent = state.calcRows.length + " / " + periodCount;
     const checkButton = document.getElementById("check-calc");
     if (checkButton) {
       checkButton.disabled = currentIndex < 0;
@@ -218,7 +237,7 @@
     state.calcRows.sort((a, b) => a - b);
     if (revealed && !state.calcRevealed.includes(index)) state.calcRevealed.push(index);
     setPeriodFieldsLocked(row, true);
-    const allDone = state.calcRows.length === 3;
+    const allDone = state.calcRows.length === periodCount;
     if (allDone) {
       markExerciseDone("calc-periods");
       unlockAfter("calc");
@@ -239,7 +258,7 @@
     const value = parseNumber(row.querySelector(".period-value").value);
     const decision = row.querySelector(".period-logic").value.trim();
     const valueOk = Number.isFinite(value) && Math.abs(value - answer) < 0.01;
-    const decisionReady = decision.length >= 20;
+    const decisionReady = decision === row.dataset.model;
 
     row.classList.toggle("correct", valueOk && decisionReady);
     row.classList.toggle("incorrect", !valueOk || !decisionReady);
@@ -250,8 +269,8 @@
         "calc-feedback",
         true,
         allDone
-          ? "<strong>Все три периода разобраны.</strong> Можно переходить к ситуациям."
-          : "<strong>Верно.</strong> Сравни свой вывод с ориентиром в строке. Следующий период открыт."
+          ? "<strong>Все пять периодов разобраны.</strong> Можно переходить к ситуациям."
+          : "<strong>Верно.</strong> Расчёт и выбранное действие подходят к ситуации. Следующий период открыт."
       );
       return;
     }
@@ -280,7 +299,7 @@
       );
     }
     if (!decisionReady) {
-      hints.push("Допиши, что результат значит относительно плана и какое действие предпримешь первым.");
+      hints.push(decision ? "Выбранное действие не подходит. Сравни ITPH с планом и учти очередь, качество и динамику нагрузки." : "Выбери вывод и первое действие из списка.");
     }
     const remaining = 3 - attempts;
     const attemptsText = remaining === 1 ? "Осталась 1 попытка." : "Осталось " + remaining + " попытки.";
@@ -300,7 +319,7 @@
       });
     });
     const counter = document.getElementById("situations-count");
-    if (counter) counter.textContent = state.situations.length + " / 3";
+    if (counter) counter.textContent = state.situations.length + " / " + situationCount;
   }
   function resolveSituation(card, id, feedbackId, message) {
     if (!state.situations.includes(id)) state.situations.push(id);
@@ -311,7 +330,7 @@
     });
     markExerciseDone("situation-" + id);
     showFeedback(feedbackId, true, message);
-    if (state.situations.length === 3) unlockAfter("situations");
+    if (state.situations.length === situationCount) unlockAfter("situations");
     else {
       saveState();
       syncUi();
@@ -320,7 +339,7 @@
 
   function answerSituation(button) {
     const card = button.closest("[data-situation]");
-    if (!card || card.classList.contains("solved")) return;
+    if (!card || card.classList.contains("solved") || card.classList.contains("is-locked") || !state.done[0]) return;
     const id = card.dataset.situation;
     const feedbackId = "situation-" + id + "-feedback";
 
@@ -346,7 +365,7 @@
       showFeedback(
         feedbackId,
         false,
-        "<strong>Не совсем.</strong> Сопоставь факт с планом, а затем посмотри, что происходит с командой, опасными зонами и Гостями. " + attemptsText
+        "<strong>Не совсем.</strong> Сопоставь факт с планом, а затем учти загрузку команды, состояние оборудования и опыт Гостей. " + attemptsText
       );
       return;
     }
@@ -364,6 +383,7 @@
   }
 
   window.completeCourse = function () {
+    if (!state.done[0] || !state.done[1] || !state.orderDone) return;
     state.done[2] = true;
     state.completed = true;
     saveState();
@@ -392,7 +412,72 @@
     syncUi();
   }
 
-  document.addEventListener("ku:ready", resetCompletedRunFromScorm);
+  document.addEventListener("ku:ready", function (event) {
+    resetCompletedRunFromScorm(event);
+    syncUi();
+  });
+
+  function updateSelectedText(select) {
+    const caption = select.parentElement.querySelector(".period-selection");
+    if (caption) caption.textContent = select.value ? select.options[select.selectedIndex].textContent : "";
+  }
+
+  function restoreOrder() {
+    const list = document.getElementById("action-order");
+    list.innerHTML = "";
+    state.order.forEach((id, index) => {
+      const item = document.createElement("li");
+      const label = document.createElement("span");
+      label.textContent = actionSteps[id];
+      item.appendChild(label);
+      const controls = document.createElement("div");
+      controls.className = "action-order__buttons";
+      [-1, 1].forEach(direction => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "ku-btn ghost";
+        button.textContent = direction < 0 ? "↑ Выше" : "↓ Ниже";
+        button.setAttribute("aria-label", button.textContent + ": " + actionSteps[id]);
+        button.dataset.step = id;
+        button.dataset.direction = direction;
+        button.disabled = state.orderDone || !state.done[1] || index + direction < 0 || index + direction >= state.order.length;
+        button.addEventListener("click", () => {
+          const target = index + direction;
+          [state.order[index], state.order[target]] = [state.order[target], state.order[index]];
+          saveState();
+          restoreOrder();
+          document.getElementById("order-feedback").classList.remove("show");
+          const movedButtons = [...list.querySelectorAll("button")].filter(b => b.dataset.step === id && !b.disabled);
+          const focusTarget = movedButtons.find(b => b.dataset.direction === String(direction)) || movedButtons[0];
+          if (focusTarget) focusTarget.focus();
+        });
+        controls.appendChild(button);
+      });
+      item.appendChild(controls);
+      list.appendChild(item);
+    });
+    document.getElementById("algorithm-reference").hidden = !state.orderDone;
+    document.getElementById("check-order").disabled = state.orderDone || !state.done[1];
+    document.getElementById("complete-course").disabled = !state.done[0] || !state.done[1] || !state.orderDone || state.completed;
+  }
+
+  window.checkActionOrder = function () {
+    if (!state.done[1] || state.orderDone) return;
+    const firstWrong = state.order.findIndex((id, index) => id !== correctOrder[index]);
+    if (firstWrong !== -1) {
+      showFeedback("order-feedback", false, "<strong>Проверь шаг " + (firstWrong + 1) + ".</strong> Сначала нужны расчёт и сравнение с планом, затем наблюдение и действие. Оценка результата — в конце.");
+      return;
+    }
+    state.orderDone = true;
+    markExerciseDone("action-order");
+    saveState();
+    syncUi();
+    showFeedback("order-feedback", true, "<strong>Верно.</strong> Рассчитай → сопоставь → найди причину → действуй → проверь результат. Теперь можно завершить курс.");
+  };
+
+  document.addEventListener("change", function (event) {
+    if (event.target.matches(".period-logic")) updateSelectedText(event.target);
+  });
 
   function closeCourseWindow() {
     window.setTimeout(function () {

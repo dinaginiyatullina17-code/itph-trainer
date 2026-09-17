@@ -102,11 +102,11 @@ body { min-height: 100vh; background: var(--ku-bg); }
 .period-answer label { display: flex; flex-direction: column; gap: var(--ku-space-3xs); min-width: 0; color: var(--ku-text-soft); font-size: 0.78em; font-weight: 700; }
 .period-answer .ku-input { min-width: 0; max-width: none; font-size: 1em; }
 .period-row.incorrect .period-answer input,
-.period-row.incorrect .period-answer textarea { border-color: var(--ku-danger); }
+.period-row.incorrect .period-answer select { border-color: var(--ku-danger); }
 .period-row.correct .period-answer input,
-.period-row.correct .period-answer textarea { border-color: var(--ku-success); }
+.period-row.correct .period-answer select { border-color: var(--ku-success); }
 .period-row.revealed .period-answer input,
-.period-row.revealed .period-answer textarea { border-color: var(--ku-warning); }
+.period-row.revealed .period-answer select { border-color: var(--ku-warning); }
 .period-reference {
   display: none;
   grid-column: 1 / -1;
@@ -247,3 +247,11 @@ body { min-height: 100vh; background: var(--ku-bg); }
   .period-row > .period-answer { grid-template-columns: 1fr; }
   #ku-page-calc.active .period-answer::before { grid-column: auto; }
 }
+
+/* Training controls: full selected text also stays visible on narrow screens. */
+.period-answer select { width: 100%; text-overflow: ellipsis; }
+.period-selection { font-weight: 400; overflow-wrap: anywhere; }
+.action-order { display: grid; gap: var(--ku-space-s); padding-left: 1.5em; margin: var(--ku-space-m) 0; }
+.action-order li { padding: var(--ku-space-s); border: 1px solid var(--ku-border-soft); border-radius: var(--ku-radius-s, 8px); }
+.action-order__buttons { display: flex; flex-wrap: wrap; gap: var(--ku-space-xs); margin-top: var(--ku-space-xs); }
+#algorithm-reference[hidden] { display: none; }
