@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  const STORAGE_KEY = "ku_itph_trainer_v6";
-  const KU_STORAGE_KEY = "ku::itph-trainer-v6";
+  const STORAGE_KEY = "ku_itph_trainer_v7";
+  const KU_STORAGE_KEY = "ku::itph-trainer-v7";
 
   function clearVariableFields() {
     document.querySelectorAll("[data-ku-var]").forEach((field) => {
