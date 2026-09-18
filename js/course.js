@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  const STORAGE_KEY = "ku_itph_trainer_v8";
-  const KU_STORAGE_KEY = "ku::itph-trainer-v8";
+  const STORAGE_KEY = "ku_itph_trainer_v9";
+  const KU_STORAGE_KEY = "ku::itph-trainer-v9";
 
   function clearVariableFields() {
     document.querySelectorAll("[data-ku-var]").forEach((field) => {
@@ -58,7 +58,6 @@
     underload: "Проанализируй прошлые периоды. При разовом снижении используй время на перерывы по расписанию, подготовку к пику и чистоту. Если снижение повторяется, скорректируй количество часов на смене без ущерба следующей смене.",
     quality: "Нормальный ITPH не исключает проблем с качеством. Проанализируй конкретный отзыв, найди корневую причину недовольства, исправь её и проверь результат.",
     absence: "Сначала проверь, кто вышел и как загружены станции. Скорректируй расстановку с учётом навыков сотрудников и организуй замену по принятому порядку.",
-    equipment: "Причина задержек — поломка фритюрницы. Прекрати её использование, сообщи ответственному по принятому порядку и приостанови продажу блюд, которые невозможно приготовить. Уточни у Гостей замену для уже принятых заказов.",
     recovery: "ITPH вернулся к плану, а очередь сокращается — изменение сработало. Проверь качество и сохрани расстановку. Через час снова оцени ITPH, очередь и качество."
   };
   const periodCount = document.querySelectorAll(".period-row").length;
@@ -96,11 +95,18 @@
       { value: "stable-cut-hours", text: "ITPH соответствует плану, скорость и качество в норме. Сократить часы одного сотрудника, чтобы повысить ITPH", feedback: "Цель уже выполнена. Искусственно повышать ITPH и создавать риск перегрузки не нужно." }
     ],
     [
-      { value: "overload", text: "ITPH выше плана, сборка не успевает. Наблюдать 2–5 минут, затем усилить сборку опытным сотрудником" },
-      { value: "high-average", text: "ITPH выше плана. Оценить среднее почасовых значений как близкое к цели и сохранить расстановку до конца смены", feedback: "Простое среднее почасовых ITPH неверно, потому что число сотрудников менялось. За весь период ITPH равен 30 при плане 25." },
-      { value: "high-add-any", text: "ITPH выше плана, сборка не успевает. Добавить на сборку свободного сотрудника с ближайшей станции", feedback: "Сначала понаблюдай за процессом и учти навыки сотрудников. Необученный сотрудник может усилить задержку и риск ошибок." },
-      { value: "high-move-to-counter", text: "ITPH выше плана, сборка не успевает. Перевести сотрудника со сборки на выдачу для ускорения передачи заказов Гостям", feedback: "Перевод со сборки ослабит станцию, которая уже не успевает. Нужно усилить причину задержки, а не переместить очередь." }
+      { value: "overload", text: "ITPH выше плана, ожидание растёт. Наблюдать 2–5 минут, определить западающую станцию и усилить её опытным сотрудником" },
+      { value: "high-average", text: "ITPH выше плана, ожидание растёт. Оценить среднее почасовых значений как близкое к цели и сохранить расстановку", feedback: "Простое среднее почасовых ITPH неверно, потому что число сотрудников менялось. За весь период ITPH равен 30 при плане 25." },
+      { value: "high-add-any", text: "ITPH выше плана, ожидание растёт. Вызвать дополнительного сотрудника и направить его на кухню для общего усиления", feedback: "Дополнительный сотрудник может понадобиться, но сначала нужно определить западающую станцию и понять, где именно нужна помощь." },
+      { value: "high-manager-counter", text: "ITPH выше плана, ожидание растёт. Менеджеру занять выдачу и сосредоточиться на скорости передачи заказов Гостям", feedback: "Работа на выдаче не устранит неизвестную причину задержки. Сначала найди западающую станцию и усиль её." }
     ]
+  ];
+  const periodChoiceOrders = [
+    [1, 0, 2, 3],
+    [2, 3, 0, 1],
+    [1, 2, 3, 0],
+    [2, 0, 3, 1],
+    [1, 2, 0, 3]
   ];
   const correctOrder = Object.keys(actionSteps);
   const originalNavigate = window.kuNavigate;
@@ -468,7 +474,9 @@
     document.querySelectorAll("select.period-logic").forEach(select => {
       if (select.parentElement.querySelector(".period-decision-choices")) return;
       const row = select.closest(".period-row");
-      const choices = periodChoices[rows.indexOf(row)] || [];
+      const rowIndex = rows.indexOf(row);
+      const sourceChoices = periodChoices[rowIndex] || [];
+      const choices = (periodChoiceOrders[rowIndex] || sourceChoices.map((_, index) => index)).map(index => sourceChoices[index]);
       const savedValue = select.value;
       select.innerHTML = '<option value="">Выбери вывод и решение</option>' + choices.map(choice => '<option value="' + choice.value + '">' + choice.text + '</option>').join("");
       if (choices.some(choice => choice.value === savedValue)) select.value = savedValue;

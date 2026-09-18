@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" data-audience="ms" data-direction="lyudi" data-theme="light" data-ku-course="itph-trainer-v8">
+<html lang="ru" data-audience="ms" data-direction="lyudi" data-theme="light" data-ku-course="itph-trainer-v9">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -77,7 +77,7 @@
             </button>
             <button class="ku-card ku-chapter course-chapter locked" id="ku-home-card-2" type="button" onclick="kuNavigate('situations')">
               <span class="ku-lock-badge"><svg class="ku-ico s"><use href="#i-lock"/></svg></span>
-              <div class="ku-chapter__num">2</div><div class="ku-chapter__body"><h3>Разобрать ситуации</h3><p>6 минут · шесть решений</p></div>
+              <div class="ku-chapter__num">2</div><div class="ku-chapter__body"><h3>Разобрать ситуации</h3><p>5 минут · пять решений</p></div>
             </button>
             <button class="ku-card ku-chapter course-chapter locked" id="ku-home-card-3" type="button" onclick="kuNavigate('finish')">
               <span class="ku-lock-badge"><svg class="ku-ico s"><use href="#i-lock"/></svg></span>
@@ -172,7 +172,7 @@
                   <div class="period-reference" role="cell"><strong>Разбор:</strong> 4 × 3 = 12 человеко-часов; 288 ÷ 12 = 24. В каждый час ITPH = 96 ÷ 4 = 24. И за каждый час, и за все 3 часа результат равен плану. Очереди и жалоб нет — сохрани расстановку и продолжай наблюдать за сменой.</div>
                 </div>
                 <div class="period-row" role="row" data-answer="30" data-setup="600 ÷ (4 × 2 + 6 × 2)" data-model="overload">
-                  <div class="period-source" role="cell" data-label="Период, блюда и сигнал"><span class="ku-badge neutral">12:00–16:00 · 4 часа</span><strong>600 блюд · план ITPH 25</strong><span>По часам: 80 → 100 → 180 → 240 блюд. К концу периода растёт очередь, сборка не успевает.</span></div>
+                  <div class="period-source" role="cell" data-label="Период, блюда и сигнал"><span class="ku-badge neutral">12:00–16:00 · 4 часа</span><strong>600 блюд · план ITPH 25</strong><span>По часам: 80 → 100 → 180 → 240 блюд. К концу периода растёт очередь и снижается скорость обслуживания.</span></div>
                   <div class="period-source" role="cell" data-label="Часы сотрудников за период"><strong>Численность менялась</strong><span>12:00–14:00 — 4 сотрудника, 14:00–16:00 — 6 сотрудников. Все работали свои интервалы полностью.</span></div>
                   <div class="period-answer" role="cell" data-label="ITPH, вывод и действие">
                     <label>ITPH<input class="ku-input num period-value" inputmode="decimal" autocomplete="off" aria-label="ITPH за 4 часа" placeholder="число" data-ku-var="itph-period-5"></label>
@@ -182,7 +182,7 @@
 <option value="quality">Проверить приготовление и сборку заказов, найти нарушения стандартов и устранить их причину</option>
 <option value="stable">Сохранить текущую расстановку и через час повторно проверить ITPH, ожидание и качество заказов</option></select><span class="period-selection" aria-live="polite"></span></label>
                   </div>
-                  <div class="period-reference" role="cell"><strong>Разбор:</strong> 4 × 2 + 6 × 2 = 20 человеко-часов; 600 ÷ 20 = 30. Правильный ITPH за 4 часа — 30 при плане 25. К концу периода сборка не успевает и растёт очередь. Перераспредели сотрудников в помощь сборке и проверь, сократилось ли ожидание.</div>
+                  <div class="period-reference" role="cell"><strong>Разбор:</strong> 4 × 2 + 6 × 2 = 20 человеко-часов; 600 ÷ 20 = 30. Правильный ITPH за 4 часа — 30 при плане 25. Наблюдай 2–5 минут, определи западающую станцию, усиль её опытным сотрудником и через час проверь результат.</div>
                 </div>
               </div>
             </div>
@@ -215,7 +215,7 @@
       <section class="course-section">
         <div class="ku-wrap narrow ku-stack l">
           <div class="situation-progress ku-reveal">
-            <span>Решено ситуаций</span><strong id="situations-count">0 / 6</strong>
+            <span>Решено ситуаций</span><strong id="situations-count">0 / 5</strong>
           </div>
 
           <article class="ku-exercise situation-card ku-reveal" style="--d:1" data-situation="overload" data-ku-id="situation-overload">
@@ -245,9 +245,9 @@
             </div>
             <p class="ku-quiz-q__text">Поток Гостей ниже прогноза. Что проверить, прежде чем менять задачи команды?</p>
             <div class="ku-choices">
-              <button class="ku-choice situation-choice" type="button" data-correct="1">Проанализировать прошлые периоды: при разовом снижении использовать время на перерывы, подготовку и чистоту; при повторении — скорректировать часы смены без ущерба следующей смене</button>
-              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Одного периода недостаточно, чтобы сокращать часы. Сначала проанализируй прошлые периоды и пойми, повторяется ли снижение.">Скорректировать количество часов текущей смены по значению ITPH этого периода и отсутствию очереди</button>
-              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Подготовка и чистота подходят при разовом снижении. Сначала проанализируй прошлые периоды и проверь динамику.">Перевести свободных сотрудников на подготовку и чистоту до конца смены по текущему потоку Гостей</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Одного периода недостаточно, чтобы сокращать часы. Сначала проанализируй прошлые периоды и пойми, повторяется ли снижение.">Скорректировать часы текущей смены по значению ITPH этого периода, отсутствию очереди и прогнозу потока ресторана до конца дня</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="1">Проанализировать прошлые периоды: разовое снижение — перерывы, подготовка и чистота; повторное — корректировка часов без ущерба следующей смене</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Подготовка и чистота подходят при разовом снижении. Сначала проанализируй прошлые периоды и проверь динамику.">Перевести свободных сотрудников на подготовку и чистоту до конца смены, сохранив запланированные часы и текущую расстановку команды</button>
             </div>
             <div class="ku-feedback" id="situation-underload-feedback" aria-live="polite"></div>
           </article>
@@ -278,22 +278,13 @@
 <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Если менеджер сразу займёт одну станцию, он может не заметить перегрузку на другой. Сначала оцени всю смену и перераспредели команду.">Занять станцию отсутствующего сотрудника, а общую расстановку проверить после пика</button></div>
             <div class="ku-feedback" id="situation-absence-feedback" aria-live="polite"></div>
           </article>
-          <article class="ku-exercise situation-card ku-reveal" data-situation="equipment" data-ku-id="situation-equipment">
-            <div class="ku-exercise__label">Ситуация 5 · Поломка в вечерний пик</div>
-            <div class="scenario-strip compact"><div class="scenario-metric"><b>26</b><span>ITPH факт</span></div><div class="scenario-metric"><b>26</b><span>ITPH план</span></div></div>
-            <p class="ku-quiz-q__text">Фритюрница вышла из строя. Заказы с картофелем задерживаются. Что сделать первым?</p>
-            <div class="ku-choices"><button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="О поломке нужно сообщить сразу. Перераспределение заказов не сделает неисправное оборудование безопасным.">Приостановить приготовление картофеля и сначала перераспределить заказы, сообщив о поломке после пика</button>
-<button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Пересчёт ITPH не влияет на безопасность оборудования. Сначала прекрати использование фритюрницы и сообщи о поломке.">Приостановить приготовление картофеля и сначала пересчитать ITPH, чтобы решить, нужна ли помощь</button>
-<button class="ku-choice situation-choice" type="button" data-correct="1">Прекратить использование фритюрницы, сообщить ответственному и приостановить продажу недоступных блюд</button></div>
-            <div class="ku-feedback" id="situation-equipment-feedback" aria-live="polite"></div>
-          </article>
           <article class="ku-exercise situation-card ku-reveal" data-situation="recovery" data-ku-id="situation-recovery">
-            <div class="ku-exercise__label">Ситуация 6 · ITPH вернулся к плану</div>
+            <div class="ku-exercise__label">Ситуация 5 · ITPH вернулся к плану</div>
             <div class="scenario-strip compact"><div class="scenario-metric"><b>25</b><span>ITPH факт</span></div><div class="scenario-metric"><b>25</b><span>ITPH план</span></div><div class="scenario-metric"><b>34</b><span>час назад</span></div><div class="scenario-metric"><b>Очередь</b><span>сокращается</span></div></div>
             <p class="ku-quiz-q__text">Час назад менеджер усилил перегруженную станцию. Что сделать сейчас?</p>
-            <div class="ku-choices"><button class="ku-choice situation-choice" type="button" data-correct="1">Зафиксировать результат, проверить качество и сохранить расстановку, пока очередь продолжает сокращаться</button>
-<button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="ITPH вернулся к плану, а очередь сокращается. Возвращать прежнюю расстановку рано — сначала убедись, что результат устойчив.">Вернуть прежнюю расстановку после выхода ITPH на плановое значение</button>
-<button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Цель — удерживать план без потери качества. Дополнительно снижать ITPH не требуется.">Добавить ещё одного сотрудника на станцию, чтобы снизить ITPH ниже плана</button></div>
+            <div class="ku-choices"><button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="ITPH вернулся к плану, а очередь сокращается. Возвращать прежнюю расстановку рано — сначала убедись, что результат устойчив.">Вернуть прежнюю расстановку: ITPH достиг плана, а очередь продолжает сокращаться после изменения</button>
+<button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Цель — удерживать план без потери качества. Дополнительно снижать ITPH не требуется.">Добавить ещё одного сотрудника на станцию и создать запас производительности перед следующим потоком Гостей</button>
+<button class="ku-choice situation-choice" type="button" data-correct="1">Зафиксировать результат, проверить качество и сохранить новую расстановку до следующей проверки через час</button></div>
             <div class="ku-feedback" id="situation-recovery-feedback" aria-live="polite"></div>
           </article>
           <div class="ku-callout warning ku-reveal">
@@ -301,7 +292,7 @@
             <div><div class="ku-callout__title">Проверь, что происходит на смене</div><p>Одного ITPH недостаточно для решения. Сравни его с планом и прошлыми периодами, затем проверь очередь, качество заказов и загрузку сотрудников.</p></div>
           </div>
           <div class="course-actions">
-            <span class="ku-small ku-soft">Реши все шесть ситуаций, чтобы открыть задание на порядок действий.</span>
+            <span class="ku-small ku-soft">Реши все пять ситуаций, чтобы открыть задание на порядок действий.</span>
             <button class="ku-btn primary course-next" id="next-situations" type="button" disabled onclick="kuNavigate('finish')">Собрать алгоритм <svg class="ku-ico arrow"><use href="#i-right"/></svg></button>
           </div>
         </div>
@@ -355,6 +346,6 @@
 
   <script src="js/kuds.js?v=20260807-1"></script>
   <script src="js/ku-scorm.js?v=20260807-1"></script>
-  <script src="js/course.js?v=20260918-12"></script>
+  <script src="js/course.js?v=20260918-13"></script>
 </body>
 </html>
