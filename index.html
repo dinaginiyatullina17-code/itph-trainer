@@ -228,7 +228,7 @@
             </div>
             <p class="ku-quiz-q__text">Кухня не успевает, ожидание растёт. Что сделать первым?</p>
             <div class="ku-choices">
-              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Выдача не устранит задержку на кухне. Сначала найди станцию, на которой скапливаются заказы.">Перевести сотрудника на выдачу, чтобы быстрее отдавать заказы, не проверяя причину задержки на кухне</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Выдача не устранит задержку на кухне. Сначала найди станцию, на которой скапливаются заказы.">Перевести сотрудника на выдачу и сосредоточиться на скорости передачи готовых заказов Гостям</button>
               <button class="ku-choice situation-choice" type="button" data-correct="1">Встать в зону наблюдения на 2–5 минут, определить западающую станцию и усилить её опытным сотрудником</button>
               <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Очередь уже растёт два периода, поэтому ждать до конца часа нельзя. Определи перегруженную станцию сейчас.">Сохранить расстановку до конца часа и сначала собрать полную статистику по времени ожидания</button>
             </div>
@@ -246,8 +246,8 @@
             <p class="ku-quiz-q__text">Поток Гостей ниже прогноза. Что проверить, прежде чем менять задачи команды?</p>
             <div class="ku-choices">
               <button class="ku-choice situation-choice" type="button" data-correct="1">Проанализировать прошлые периоды: при разовом снижении использовать время на перерывы, подготовку и чистоту; при повторении — скорректировать часы смены без ущерба следующей смене</button>
-              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Одного периода недостаточно, чтобы сокращать часы. Сначала проанализируй прошлые периоды и пойми, повторяется ли снижение.">Сразу сократить количество часов на смене: текущий ITPH ниже плана и очереди пока нет</button>
-              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Подготовка и чистота подходят при разовом снижении. Сначала проанализируй прошлые периоды и проверь динамику.">Сразу перевести свободных сотрудников на подготовку, не анализируя прошлые периоды</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Одного периода недостаточно, чтобы сокращать часы. Сначала проанализируй прошлые периоды и пойми, повторяется ли снижение.">Скорректировать количество часов текущей смены по значению ITPH этого периода и отсутствию очереди</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Подготовка и чистота подходят при разовом снижении. Сначала проанализируй прошлые периоды и проверь динамику.">Перевести свободных сотрудников на подготовку и чистоту до конца смены по текущему потоку Гостей</button>
             </div>
             <div class="ku-feedback" id="situation-underload-feedback" aria-live="polite"></div>
           </article>
@@ -263,7 +263,7 @@
             <p class="ku-quiz-q__text">Нагрузка по плану, но Гости недовольны. Что делать?</p>
             <div class="ku-choices">
               <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Главный сигнал здесь — рост жалоб. Перевод на выдачу не устранит ошибки приготовления или сборки.">Перевести сотрудника на выдачу, чтобы сократить ожидание, а причины жалоб разобрать после пика</button>
-              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="ITPH уже соответствует плану. Дополнительный сотрудник не решит проблему, пока не найдена причина жалоб.">Увеличить число сотрудников на кухне, чтобы снизить нагрузку, не проверяя причины жалоб</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="ITPH уже соответствует плану. Дополнительный сотрудник не решит проблему, пока не найдена причина жалоб.">Увеличить число сотрудников на кухне для снижения нагрузки, а причины жалоб разобрать после пика</button>
               <button class="ku-choice situation-choice" type="button" data-correct="1">Проанализировать конкретный отзыв, найти корневую причину недовольства, исправить её и проверить результат</button>
             </div>
             <div class="ku-feedback" id="situation-quality-feedback" aria-live="polite"></div>
@@ -273,9 +273,9 @@
             <div class="ku-exercise__label">Ситуация 4 · Невыход на обеденную смену</div>
             <div class="scenario-strip compact"><div class="scenario-metric"><b>35</b><span>ITPH факт</span></div><div class="scenario-metric"><b>28</b><span>ITPH план</span></div></div>
             <p class="ku-quiz-q__text">Один сотрудник не вышел на смену. Что сделать первым?</p>
-            <div class="ku-choices"><button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Замена нужна, но до её прихода команда уже работает в неполном составе. Сначала проверь загрузку станций и скорректируй расстановку.">Сначала вызвать замену и до её прихода сохранить плановую расстановку остальных сотрудников</button>
+            <div class="ku-choices"><button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Замена нужна, но до её прихода команда уже работает в неполном составе. Сначала проверь загрузку станций и скорректируй расстановку.">Вызвать замену и до её прихода сохранить плановую расстановку остальных сотрудников</button>
 <button class="ku-choice situation-choice" type="button" data-correct="1">Проверить фактический состав и загрузку станций, скорректировать расстановку и организовать замену</button>
-<button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Если менеджер сразу займёт одну станцию, он может не заметить перегрузку на другой. Сначала оцени всю смену и перераспредели команду.">Сначала занять станцию отсутствующего сотрудника, а общую расстановку проверить после пика</button></div>
+<button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Если менеджер сразу займёт одну станцию, он может не заметить перегрузку на другой. Сначала оцени всю смену и перераспредели команду.">Занять станцию отсутствующего сотрудника, а общую расстановку проверить после пика</button></div>
             <div class="ku-feedback" id="situation-absence-feedback" aria-live="polite"></div>
           </article>
           <article class="ku-exercise situation-card ku-reveal" data-situation="equipment" data-ku-id="situation-equipment">
@@ -292,7 +292,7 @@
             <div class="scenario-strip compact"><div class="scenario-metric"><b>25</b><span>ITPH факт</span></div><div class="scenario-metric"><b>25</b><span>ITPH план</span></div><div class="scenario-metric"><b>34</b><span>час назад</span></div><div class="scenario-metric"><b>Очередь</b><span>сокращается</span></div></div>
             <p class="ku-quiz-q__text">Час назад менеджер усилил перегруженную станцию. Что сделать сейчас?</p>
             <div class="ku-choices"><button class="ku-choice situation-choice" type="button" data-correct="1">Зафиксировать результат, проверить качество и сохранить расстановку, пока очередь продолжает сокращаться</button>
-<button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="ITPH вернулся к плану, а очередь сокращается. Возвращать прежнюю расстановку рано — сначала убедись, что результат устойчив.">Сразу вернуть прежнюю расстановку: ITPH уже соответствует плану</button>
+<button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="ITPH вернулся к плану, а очередь сокращается. Возвращать прежнюю расстановку рано — сначала убедись, что результат устойчив.">Вернуть прежнюю расстановку после выхода ITPH на плановое значение</button>
 <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Цель — удерживать план без потери качества. Дополнительно снижать ITPH не требуется.">Добавить ещё одного сотрудника на станцию, чтобы снизить ITPH ниже плана</button></div>
             <div class="ku-feedback" id="situation-recovery-feedback" aria-live="polite"></div>
           </article>
@@ -355,6 +355,6 @@
 
   <script src="js/kuds.js?v=20260807-1"></script>
   <script src="js/ku-scorm.js?v=20260807-1"></script>
-  <script src="js/course.js?v=20260918-11"></script>
+  <script src="js/course.js?v=20260918-12"></script>
 </body>
 </html>
