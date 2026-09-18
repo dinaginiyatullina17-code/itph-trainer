@@ -249,7 +249,12 @@ body { min-height: 100vh; background: var(--ku-bg); }
 }
 
 /* Training controls: full selected text also stays visible on narrow screens. */
-.period-answer select { width: 100%; text-overflow: ellipsis; }
+.period-logic__native { display: none; }
+.period-decision-choices { display: grid; gap: var(--ku-space-xs); }
+.period-decision-choice { width: 100%; padding: var(--ku-space-xs); border: 1px solid var(--ku-border); border-radius: var(--ku-radius-s, 8px); background: var(--ku-card); color: var(--ku-text); font: inherit; font-weight: 600; line-height: 1.4; text-align: left; cursor: pointer; white-space: normal; overflow-wrap: anywhere; }
+.period-decision-choice:hover { border-color: var(--ku-brand); background: var(--ku-surface); }
+.period-decision-choice.selected { border-color: var(--ku-brand); background: var(--ku-brand-soft); box-shadow: 0 0 0 1px var(--ku-brand); }
+.period-decision-choice:disabled { cursor: default; opacity: .78; }
 .period-selection { font-weight: 400; overflow-wrap: anywhere; }
 .action-order { display: grid; gap: var(--ku-space-s); margin: var(--ku-space-m) 0; }
 .calc-instructions { padding-left: 1.5em; display: grid; gap: var(--ku-space-xs); }

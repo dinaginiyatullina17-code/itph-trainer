@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  const STORAGE_KEY = "ku_itph_trainer_v5";
-  const KU_STORAGE_KEY = "ku::itph-trainer-v5";
+  const STORAGE_KEY = "ku_itph_trainer_v6";
+  const KU_STORAGE_KEY = "ku::itph-trainer-v6";
 
   function clearVariableFields() {
     document.querySelectorAll("[data-ku-var]").forEach((field) => {
@@ -417,7 +417,46 @@
 
   function updateSelectedText(select) {
     const caption = select.parentElement.querySelector(".period-selection");
-    if (caption) caption.textContent = select.value ? select.options[select.selectedIndex].textContent : "";
+    if (caption) caption.textContent = "";
+    const group = select.parentElement.querySelector(".period-decision-choices");
+    if (!group) return;
+    group.querySelectorAll(".period-decision-choice").forEach(button => {
+      const selected = button.dataset.value === select.value;
+      button.classList.toggle("selected", selected);
+      button.setAttribute("aria-checked", String(selected));
+      button.disabled = select.disabled;
+    });
+  }
+
+  function initializeDecisionChoices() {
+    document.querySelectorAll("select.period-logic").forEach(select => {
+      if (select.parentElement.querySelector(".period-decision-choices")) return;
+      select.classList.add("period-logic__native");
+      select.setAttribute("aria-hidden", "true");
+      select.tabIndex = -1;
+      const group = document.createElement("div");
+      group.className = "period-decision-choices";
+      group.setAttribute("role", "radiogroup");
+      group.setAttribute("aria-label", select.getAttribute("aria-label") || "Вывод и действие");
+      [...select.options].filter(option => option.value).forEach(option => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "period-decision-choice";
+        button.dataset.value = option.value;
+        button.setAttribute("role", "radio");
+        button.textContent = option.textContent;
+        button.addEventListener("click", () => {
+          if (select.disabled) return;
+          select.value = option.value;
+          select.dispatchEvent(new Event("input", { bubbles: true }));
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+          updateSelectedText(select);
+        });
+        group.appendChild(button);
+      });
+      select.insertAdjacentElement("afterend", group);
+      updateSelectedText(select);
+    });
   }
 
   function restoreOrder() {
@@ -511,6 +550,7 @@
     window.kuSetAudience("ms");
     window.kuSetDirection("lyudi");
     window.kuSetTheme("light");
+    initializeDecisionChoices();
     syncUi();
   });
 })();
