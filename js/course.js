@@ -55,10 +55,10 @@
   };
   const situationFeedback = {
     overload: "Высокий ITPH вместе с очередью и отставанием кухни указывает на перегрузку. Определи западающую зону и скорректируй расстановку.",
-    underload: "Нагрузка ниже плана и очереди нет. Перераспредели людей и используй освободившееся время с пользой.",
+    underload: "Сначала сравни ITPH с прошлыми периодами. При разовом снижении дай задачи по подготовке и уборке, сохранив готовность обслуживать Гостей. Если снижение повторяется, скорректируй численность или график.",
     quality: "Нормальный ITPH не исключает проблем с качеством. Проверь процесс приготовления, сборки и соблюдение стандартов.",
-    absence: "Сначала обеспечь работу участков силами обученных сотрудников и организуй замену. Учитывай фактические часы вышедших людей, затем проверь очередь и нагрузку.",
-    equipment: "Причина задержек — оборудование. Прекрати его использование, сообщи ответственному по принятому порядку и организуй работу на исправном оборудовании с учётом его мощности.",
+    absence: "Сначала проверь, кто вышел и как загружены станции. Скорректируй расстановку с учётом навыков сотрудников и организуй замену по принятому порядку. Для ITPH используй фактические часы работающих сотрудников.",
+    equipment: "Причина задержек — поломка фритюрницы. Прекрати её использование, сообщи ответственному по принятому порядку и приостанови продажу блюд, которые невозможно приготовить. Уточни у Гостей замену для уже принятых заказов.",
     trainee: "Новичку нужны показ стандарта и помощь опытного сотрудника. Проверь следующие заказы: одинаковый с планом ITPH не гарантирует правильную сборку."
   };
   const periodCount = document.querySelectorAll(".period-row").length;
@@ -66,9 +66,9 @@
   const actionSteps = {
     calculate: "Посчитать ITPH по фактическим блюдам и часам сотрудников за выбранный период.",
     compare: "Сопоставить ITPH с планом и динамикой предыдущих периодов.",
-    observe: "Проверить очередь, качество и загрузку рабочих участков; определить причину задержки.",
+    observe: "Проверить очередь, качество и загрузку рабочих станций; определить причину задержки.",
     act: "Устранить найденную причину: скорректировать расстановку или организовать помощь.",
-    review: "Через 30 минут проверить ITPH, ожидание и качество; при необходимости скорректировать решение."
+    review: "Через час проверить ITPH, ожидание и качество; при необходимости скорректировать решение."
   };
   const correctOrder = Object.keys(actionSteps);
   const originalNavigate = window.kuNavigate;
@@ -422,12 +422,65 @@
     if (caption) caption.textContent = select.value ? select.options[select.selectedIndex].textContent : "";
   }
 
+  function beginOrderDrag(event, item, list) {
+    if (state.orderDone || !state.done[1] || event.button !== 0) return;
+    event.preventDefault();
+    const pointerId = event.pointerId;
+    const stepId = item.dataset.step;
+    item.classList.add("is-dragging");
+    list.setPointerCapture(pointerId);
+    const announce = document.getElementById("order-announcement");
+    function move(e) {
+      if (e.pointerId !== pointerId) return;
+      const before = [...list.children].find(card => {
+        if (card === item) return false;
+        const rect = card.getBoundingClientRect();
+        return e.clientY < rect.top + rect.height / 2;
+      });
+      list.insertBefore(item, before || null);
+      if (e.clientY < 100) window.scrollBy(0, -18);
+      else if (e.clientY > window.innerHeight - 100) window.scrollBy(0, 18);
+      announce.textContent = "Позиция: " + ([...list.children].indexOf(item) + 1) + " из " + state.order.length;
+    }
+    function finish(e) {
+      if (e.pointerId !== pointerId) return;
+      list.removeEventListener("pointermove", move);
+      list.removeEventListener("pointerup", finish);
+      list.removeEventListener("pointercancel", cancel);
+      list.removeEventListener("lostpointercapture", cancel);
+      if (list.hasPointerCapture(pointerId)) list.releasePointerCapture(pointerId);
+      if (e.type === "pointerup") {
+        state.order = [...list.children].map(card => card.dataset.step);
+        saveState();
+        document.getElementById("order-feedback").classList.remove("show");
+      }
+      restoreOrder();
+      list.querySelector('[data-step="' + stepId + '"] .action-order__handle').focus({ preventScroll: true });
+      announce.textContent = e.type === "pointerup" ? "Шаг перемещён на позицию " + (state.order.indexOf(stepId) + 1) + "." : "Перемещение отменено.";
+    }
+    function cancel(e) { finish(e); }
+    list.addEventListener("pointermove", move);
+    list.addEventListener("pointerup", finish);
+    list.addEventListener("pointercancel", cancel);
+    list.addEventListener("lostpointercapture", cancel);
+  }
+
   function restoreOrder() {
     const list = document.getElementById("action-order");
     list.innerHTML = "";
     state.order.forEach((id, index) => {
       const item = document.createElement("li");
+      item.dataset.step = id;
+      const handle = document.createElement("button");
+      handle.type = "button";
+      handle.className = "action-order__handle";
+      handle.textContent = "⠿";
+      handle.setAttribute("aria-label", "Перетащить шаг. Для клавиатуры используй кнопки выше и ниже: " + actionSteps[id]);
+      handle.disabled = state.orderDone || !state.done[1];
+      handle.addEventListener("pointerdown", event => beginOrderDrag(event, item, list));
+      item.appendChild(handle);
       const label = document.createElement("span");
+      label.className = "action-order__text";
       label.textContent = actionSteps[id];
       item.appendChild(label);
       const controls = document.createElement("div");

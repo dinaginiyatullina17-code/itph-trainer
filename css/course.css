@@ -254,4 +254,11 @@ body { min-height: 100vh; background: var(--ku-bg); }
 .action-order { display: grid; gap: var(--ku-space-s); padding-left: 1.5em; margin: var(--ku-space-m) 0; }
 .action-order li { padding: var(--ku-space-s); border: 1px solid var(--ku-border-soft); border-radius: var(--ku-radius-s, 8px); }
 .action-order__buttons { display: flex; flex-wrap: wrap; gap: var(--ku-space-xs); margin-top: var(--ku-space-xs); }
+.calc-instructions { padding-left: 1.5em; display: grid; gap: var(--ku-space-xs); }
+.action-order li { position: relative; padding-left: 3.5rem; background: var(--ku-card); }
+.action-order__handle { position: absolute; top: .6rem; left: .4rem; width: 2.5rem; height: 2.75rem; border: 1px solid var(--ku-border-soft); border-radius: 8px; background: var(--ku-surface); color: var(--ku-brand-strong); font-size: 1.8rem; cursor: grab; touch-action: none; user-select: none; }
+.action-order__handle:disabled { cursor: default; opacity: .4; }
+.action-order .is-dragging { border-color: var(--ku-brand); box-shadow: var(--ku-shadow-m); background: var(--ku-surface); }
+.action-order .is-dragging .action-order__handle { cursor: grabbing; }
+.action-order__buttons .ku-btn { padding: .35rem .65rem; font-size: .8rem; }
 #algorithm-reference[hidden] { display: none; }
