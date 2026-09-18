@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Интерактивный тренажёр для менеджеров смены: расчёт ITPH, диагностика смены и выбор управленческого действия.">
+  <meta name="description" content="Интерактивный тренажёр для управляющих сменой: расчёт ITPH, диагностика смены и выбор управленческого действия.">
   <title>Тренажёр «Работа с ITPH»</title>
   <link rel="stylesheet" href="css/kuds.css?v=20260918-3">
 </head>
@@ -209,7 +209,7 @@
           <button class="ku-btn ghost course-back" type="button" onclick="kuNavigate('home')"><svg class="ku-ico"><use href="#i-left"/></svg> К маршруту</button>
           <span class="ku-eyebrow">Тренажёр 2 из 3</span>
           <h1 class="ku-h1">Одна цифра.<br>Разные решения.</h1>
-          <p class="ku-lead">Сопоставь ITPH с планом и реальной сменой. Выбери первое действие менеджера в каждой ситуации.</p>
+          <p class="ku-lead">Сопоставь ITPH с планом и реальной сменой. Выбери первое действие управляющего в каждой ситуации.</p>
         </div>
       </section>
       <section class="course-section">
@@ -275,13 +275,13 @@
             <p class="ku-quiz-q__text">Один сотрудник не вышел на смену. Что сделать первым?</p>
             <div class="ku-choices"><button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Замена нужна, но до её прихода команда уже работает в неполном составе. Сначала проверь загрузку станций и скорректируй расстановку.">Вызвать замену и до её прихода сохранить плановую расстановку остальных сотрудников</button>
 <button class="ku-choice situation-choice" type="button" data-correct="1">Проверить фактический состав и загрузку станций, скорректировать расстановку и организовать замену</button>
-<button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Если менеджер сразу займёт одну станцию, он может не заметить перегрузку на другой. Сначала оцени всю смену и перераспредели команду.">Занять станцию отсутствующего сотрудника, а общую расстановку проверить после пика</button></div>
+<button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Если управляющий сразу займёт одну станцию, он может не заметить перегрузку на другой. Сначала оцени всю смену и перераспредели команду.">Занять станцию отсутствующего сотрудника, а общую расстановку проверить после пика</button></div>
             <div class="ku-feedback" id="situation-absence-feedback" aria-live="polite"></div>
           </article>
           <article class="ku-exercise situation-card ku-reveal" data-situation="recovery" data-ku-id="situation-recovery">
             <div class="ku-exercise__label">Ситуация 5 · ITPH вернулся к плану</div>
             <div class="scenario-strip compact"><div class="scenario-metric"><b>25</b><span>ITPH факт</span></div><div class="scenario-metric"><b>25</b><span>ITPH план</span></div><div class="scenario-metric"><b>34</b><span>час назад</span></div><div class="scenario-metric"><b>Очередь</b><span>сокращается</span></div></div>
-            <p class="ku-quiz-q__text">Час назад менеджер усилил перегруженную станцию. Что сделать сейчас?</p>
+            <p class="ku-quiz-q__text">Час назад управляющий усилил перегруженную станцию. Что сделать сейчас?</p>
             <div class="ku-choices"><button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="ITPH вернулся к плану, а очередь сокращается. Возвращать прежнюю расстановку рано — сначала убедись, что результат устойчив.">Вернуть прежнюю расстановку: ITPH достиг плана, а очередь продолжает сокращаться после изменения</button>
 <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Цель — удерживать план без потери качества. Дополнительно снижать ITPH не требуется.">Добавить ещё одного сотрудника на станцию и создать запас производительности перед следующим потоком Гостей</button>
 <button class="ku-choice situation-choice" type="button" data-correct="1">Зафиксировать результат, проверить качество и сохранить новую расстановку до следующей проверки через час</button></div>
@@ -312,7 +312,7 @@
         <div class="ku-wrap narrow ku-stack l">
           <div class="ku-exercise ku-reveal" data-ku-id="action-order">
             <div class="ku-exercise__label">Тренажёр 3 из 3 · Порядок действий</div>
-            <h2 class="ku-h2">Собери алгоритм менеджера</h2>
+            <h2 class="ku-h2">Собери алгоритм управляющего</h2>
             <p>На смене растёт ожидание заказов. Поставь каждому действию номер от 1 до 5: 1 — первое действие, 5 — последнее.</p>
             <div id="action-order" class="action-order"></div>
             <button class="ku-btn secondary" id="check-order" type="button" onclick="checkActionOrder()">Проверить порядок</button>
@@ -346,6 +346,6 @@
 
   <script src="js/kuds.js?v=20260807-1"></script>
   <script src="js/ku-scorm.js?v=20260807-1"></script>
-  <script src="js/course.js?v=20260918-13"></script>
+  <script src="js/course.js?v=20260918-14"></script>
 </body>
 </html>
