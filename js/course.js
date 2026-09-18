@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  const STORAGE_KEY = "ku_itph_trainer_v7";
-  const KU_STORAGE_KEY = "ku::itph-trainer-v7";
+  const STORAGE_KEY = "ku_itph_trainer_v8";
+  const KU_STORAGE_KEY = "ku::itph-trainer-v8";
 
   function clearVariableFields() {
     document.querySelectorAll("[data-ku-var]").forEach((field) => {
@@ -70,12 +70,38 @@
     act: "Устранить найденную причину: скорректировать расстановку или организовать помощь.",
     review: "Через час проверить ITPH, ожидание и качество; при необходимости скорректировать решение."
   };
-  const decisionLabels = {
-    underload: "ITPH ниже плана. Проанализировать прошлые периоды: при разовом отклонении использовать время на перерывы, подготовку и чистоту, при повторении — скорректировать часы без ущерба следующей смене",
-    overload: "ITPH выше плана. Наблюдать 2–5 минут, определить западающую станцию и усилить её опытным сотрудником",
-    quality: "ITPH соответствует плану, но есть жалобы. Проанализировать конкретный отзыв, найти и исправить корневую причину, проверить результат",
-    stable: "ITPH соответствует плану, скорость и качество в норме. Сохранить расстановку и через час повторно проверить показатели"
-  };
+  const periodChoices = [
+    [
+      { value: "underload", text: "ITPH ниже плана. Проанализировать прошлые периоды: при разовом отклонении использовать время на перерывы, подготовку и чистоту, при повторении — скорректировать часы без ущерба следующей смене" },
+      { value: "low-cut-now", text: "ITPH ниже плана. Сразу отпустить сотрудника домой, потому что в этом часу нет очереди", feedback: "Один час ниже плана ещё не подтверждает устойчивое снижение. Сначала проанализируй прошлые периоды и ожидаемый поток." },
+      { value: "low-prep-all-shift", text: "ITPH ниже плана. Сохранить все часы команды и занять свободных сотрудников подготовкой до конца смены", feedback: "Подготовка полезна при разовом снижении, но решение на всю смену нельзя принимать без анализа прошлых периодов." },
+      { value: "low-transfer-now", text: "ITPH ниже плана. Сразу перенаправить сотрудника в другой ресторан, не проверяя ожидаемый пик и следующую смену", feedback: "Перенаправление возможно при повторяющемся снижении, но сначала нужно проверить динамику и не оставить следующую смену без помощи." }
+    ],
+    [
+      { value: "overload", text: "ITPH выше плана. Наблюдать 2–5 минут, определить западающую станцию и усилить её опытным сотрудником" },
+      { value: "high-call-now", text: "ITPH выше плана. Сразу вызвать дополнительного сотрудника, не определяя причину задержки", feedback: "Дополнительный сотрудник может понадобиться, но сначала определи западающую станцию и пойми, поможет ли он устранить задержку." },
+      { value: "high-manager-station", text: "ITPH выше плана. Менеджеру самому встать на самую загруженную станцию до конца пика", feedback: "Помощь менеджера даст временный эффект, но не устранит причину. Сначала понаблюдай и скорректируй расстановку команды." },
+      { value: "high-speed-up", text: "ITPH выше плана. Сохранить расстановку и попросить всю команду работать быстрее", feedback: "Команда уже перегружена. Просьба ускориться без поиска западающей станции повышает риск ошибок и не устраняет причину очереди." }
+    ],
+    [
+      { value: "quality", text: "ITPH соответствует плану, но есть жалобы. Проанализировать конкретный отзыв, найти и исправить корневую причину, проверить результат" },
+      { value: "quality-remind-all", text: "ITPH соответствует плану, но есть жалобы. Напомнить всей команде стандарты качества на ближайшей пятиминутке", feedback: "Общее напоминание не показывает, какое действие вызвало жалобу. Сначала проанализируй конкретный отзыв." },
+      { value: "quality-check-all", text: "ITPH соответствует плану, но есть жалобы. Назначить опытного сотрудника дополнительно проверять каждый заказ", feedback: "Дополнительная проверка может снизить риск, но не устранит неизвестную причину жалоб. Сначала найди корневую причину." },
+      { value: "quality-add-person", text: "ITPH соответствует плану, но есть жалобы. Добавить сотрудника на кухню, чтобы снизить нагрузку", feedback: "ITPH и скорость соответствуют плану. Дополнительный сотрудник не исправит проблему, пока не определена причина жалоб." }
+    ],
+    [
+      { value: "stable", text: "ITPH соответствует плану, скорость и качество в норме. Сохранить расстановку и через час повторно проверить показатели" },
+      { value: "stable-no-check", text: "ITPH соответствует плану, скорость и качество в норме. Сохранить расстановку и проверить показатели только в конце смены", feedback: "ITPH нужно контролировать каждый час, чтобы вовремя заметить изменение потока, скорости или качества." },
+      { value: "stable-prep-gap", text: "ITPH соответствует плану, скорость и качество в норме. Перевести сотрудника со станции на подготовку до конца периода", feedback: "Станции справляются с текущей расстановкой. Перевод сотрудника без нового сигнала может создать западающую станцию." },
+      { value: "stable-cut-hours", text: "ITPH соответствует плану, скорость и качество в норме. Сократить часы одного сотрудника, чтобы повысить ITPH", feedback: "Цель уже выполнена. Искусственно повышать ITPH и создавать риск перегрузки не нужно." }
+    ],
+    [
+      { value: "overload", text: "ITPH выше плана, сборка не успевает. Наблюдать 2–5 минут, затем усилить сборку опытным сотрудником" },
+      { value: "high-average", text: "ITPH выше плана, но среднее почасовых значений близко к цели. Сохранить расстановку до конца смены", feedback: "Простое среднее почасовых ITPH неверно, потому что число сотрудников менялось. За весь период ITPH равен 30 при плане 25." },
+      { value: "high-add-any", text: "ITPH выше плана, сборка не успевает. Сразу добавить на сборку любого свободного сотрудника", feedback: "Сначала понаблюдай за процессом и учти навыки сотрудников. Необученный сотрудник может усилить задержку и риск ошибок." },
+      { value: "high-move-to-counter", text: "ITPH выше плана, сборка не успевает. Перевести сотрудника со сборки на выдачу, чтобы уменьшить видимую очередь", feedback: "Перевод со сборки ослабит станцию, которая уже не успевает. Нужно усилить причину задержки, а не переместить очередь." }
+    ]
+  ];
   const correctOrder = Object.keys(actionSteps);
   const originalNavigate = window.kuNavigate;
   let state = loadState();
@@ -272,14 +298,12 @@
     row.classList.toggle("incorrect", !valueOk || !decisionReady);
 
     if (valueOk && decisionReady) {
-      const allDone = resolvePeriod(row, currentIndex, false);
-      showFeedback(
-        "calc-feedback",
-        true,
-        allDone
-          ? "<strong>Все пять периодов разобраны.</strong> Можно переходить к ситуациям."
-          : "<strong>Верно.</strong> Расчёт и выбранное действие подходят к ситуации. Следующий период открыт."
-      );
+      resolvePeriod(row, currentIndex, false);
+      const feedback = document.getElementById("calc-feedback");
+      if (feedback) {
+        feedback.classList.remove("show");
+        feedback.innerHTML = "";
+      }
       return;
     }
 
@@ -290,7 +314,11 @@
 
     if (attempts >= 3) {
       const allDone = resolvePeriod(row, currentIndex, true);
-      showFeedback("calc-feedback", true, allDone ? "Ответ открыт в строке. Можно переходить к ситуациям." : "Ответ открыт в строке. Следующий период открыт.");
+      const feedback = document.getElementById("calc-feedback");
+      if (feedback) {
+        feedback.classList.remove("show");
+        feedback.innerHTML = "";
+      }
       return;
     }
 
@@ -303,7 +331,8 @@
       );
     }
     if (!decisionReady) {
-      hints.push(decision ? "Выбранное действие не подходит. Сравни ITPH с планом и учти очередь, качество и динамику нагрузки." : "Выбери вывод и первое действие из списка.");
+      const selectedChoice = row.querySelector(".period-decision-choice.selected");
+      hints.push(decision && selectedChoice ? selectedChoice.dataset.feedback : "Выбери вывод и первое действие из списка.");
     }
     const remaining = 3 - attempts;
     const attemptsText = remaining === 1 ? "Осталась 1 попытка." : "Осталось " + remaining + " попытки.";
@@ -435,8 +464,14 @@
   }
 
   function initializeDecisionChoices() {
+    const rows = [...document.querySelectorAll(".period-row")];
     document.querySelectorAll("select.period-logic").forEach(select => {
       if (select.parentElement.querySelector(".period-decision-choices")) return;
+      const row = select.closest(".period-row");
+      const choices = periodChoices[rows.indexOf(row)] || [];
+      const savedValue = select.value;
+      select.innerHTML = '<option value="">Выбери вывод и решение</option>' + choices.map(choice => '<option value="' + choice.value + '">' + choice.text + '</option>').join("");
+      if (choices.some(choice => choice.value === savedValue)) select.value = savedValue;
       const labelText = select.parentElement.firstChild;
       if (labelText && labelText.nodeType === Node.TEXT_NODE) labelText.nodeValue = "Вывод и решение";
       select.classList.add("period-logic__native");
@@ -446,17 +481,18 @@
       group.className = "period-decision-choices";
       group.setAttribute("role", "radiogroup");
       group.setAttribute("aria-label", select.getAttribute("aria-label") || "Вывод и действие");
-      [...select.options].filter(option => option.value).forEach(option => {
-        option.textContent = decisionLabels[option.value] || option.textContent;
+      choices.forEach(choice => {
         const button = document.createElement("button");
         button.type = "button";
         button.className = "period-decision-choice";
-        button.dataset.value = option.value;
+        button.dataset.value = choice.value;
+        button.dataset.correct = String(choice.value === row.dataset.model ? 1 : 0);
+        button.dataset.feedback = choice.feedback || "";
         button.setAttribute("role", "radio");
-        button.textContent = option.textContent;
+        button.textContent = choice.text;
         button.addEventListener("click", () => {
           if (select.disabled) return;
-          select.value = option.value;
+          select.value = choice.value;
           select.dispatchEvent(new Event("input", { bubbles: true }));
           select.dispatchEvent(new Event("change", { bubbles: true }));
           updateSelectedText(select);
