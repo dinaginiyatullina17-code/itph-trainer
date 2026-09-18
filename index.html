@@ -130,7 +130,7 @@
 <option value="quality">Проверить приготовление и сборку заказов, найти нарушения стандартов и устранить их причину</option>
 <option value="stable">Сохранить текущую расстановку и через час повторно проверить ITPH, ожидание и качество заказов</option></select><span class="period-selection" aria-live="polite"></span></label>
                   </div>
-                  <div class="period-reference" role="cell"><strong>Ориентир:</strong> ITPH ниже плана. Сравни с прошлыми периодами: если снижение разовое — дай команде полезные задачи; если повторяется — скорректируй численность или график.</div>
+                  <div class="period-reference" role="cell"><strong>Ориентир:</strong> ITPH ниже плана. Проанализируй прошлые периоды. Если отклонение разовое — используй время на перерывы, подготовку к пику и чистоту. Если повторяется — скорректируй количество часов на смене без ущерба следующей смене.</div>
                 </div>
                 <div class="period-row" role="row" data-answer="36" data-setup="144 ÷ 4" data-model="overload">
                   <div class="period-source" role="cell" data-label="Период, блюда и сигнал"><span class="ku-badge neutral">13:00–14:00</span><strong>144 блюда · план ITPH 28</strong><span>Скорость падает, кухня не успевает</span></div>
@@ -143,7 +143,7 @@
 <option value="quality">Проверить приготовление и сборку заказов, найти нарушения стандартов и устранить их причину</option>
 <option value="stable">Сохранить текущую расстановку и через час повторно проверить ITPH, ожидание и качество заказов</option></select><span class="period-selection" aria-live="polite"></span></label>
                   </div>
-                  <div class="period-reference" role="cell"><strong>Ориентир:</strong> ITPH выше плана, а кухня отстаёт — это перегрузка. Встань в зону наблюдения, найди западающую зону и скорректируй расстановку.</div>
+                  <div class="period-reference" role="cell"><strong>Ориентир:</strong> ITPH выше плана, а кухня отстаёт. Встань в зону наблюдения на 2–5 минут, определи западающую станцию и усиль её опытным сотрудником.</div>
                 </div>
                 <div class="period-row" role="row" data-answer="24" data-setup="96 ÷ 4" data-model="quality">
                   <div class="period-source" role="cell" data-label="Период, блюда и сигнал"><span class="ku-badge neutral">18:00–19:00</span><strong>96 блюд · план ITPH 24</strong><span>Скорость в норме, жалоб на качество стало больше</span></div>
@@ -156,7 +156,7 @@
 <option value="quality">Проверить приготовление и сборку заказов, найти нарушения стандартов и устранить их причину</option>
 <option value="stable">Сохранить текущую расстановку и через час повторно проверить ITPH, ожидание и качество заказов</option></select><span class="period-selection" aria-live="polite"></span></label>
                   </div>
-                  <div class="period-reference" role="cell"><strong>Ориентир:</strong> ITPH совпал с планом, но жалобы показывают проблему качества. Проверь приготовление, сборку и соблюдение стандартов, устрани причину и перепроверь.</div>
+                  <div class="period-reference" role="cell"><strong>Ориентир:</strong> ITPH совпал с планом, но появились жалобы. Проанализируй конкретный отзыв, найди корневую причину недовольства, исправь её и проверь результат.</div>
                 </div>
                 <div class="period-row" role="row" data-answer="24" data-setup="288 ÷ (4 × 3)" data-model="stable">
                   <div class="period-source" role="cell" data-label="Период, блюда и сигнал"><span class="ku-badge neutral">10:00–13:00 · 3 часа</span><strong>288 блюд · план ITPH 24</strong><span>По часам: 96 → 96 → 96 блюд. Очереди и жалоб нет.</span></div>
@@ -229,7 +229,7 @@
             <p class="ku-quiz-q__text">Кухня не успевает, ожидание растёт. Что сделать первым?</p>
             <div class="ku-choices">
               <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Выдача не устранит задержку на кухне. Сначала найди станцию, на которой скапливаются заказы.">Перевести сотрудника на выдачу, чтобы быстрее отдавать заказы, не проверяя причину задержки на кухне</button>
-              <button class="ku-choice situation-choice" type="button" data-correct="1">Определить, какая станция не справляется, и перераспределить сотрудников с учётом их навыков</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="1">Встать в зону наблюдения на 2–5 минут, определить западающую станцию и усилить её опытным сотрудником</button>
               <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Очередь уже растёт два периода, поэтому ждать до конца часа нельзя. Определи перегруженную станцию сейчас.">Сохранить расстановку до конца часа и сначала собрать полную статистику по времени ожидания</button>
             </div>
             <div class="ku-feedback" id="situation-overload-feedback" aria-live="polite"></div>
@@ -245,9 +245,9 @@
             </div>
             <p class="ku-quiz-q__text">Поток Гостей ниже прогноза. Что проверить, прежде чем менять задачи команды?</p>
             <div class="ku-choices">
-              <button class="ku-choice situation-choice" type="button" data-correct="1">Сравнить ITPH с прошлыми периодами: при разовом снижении дать задачи по подготовке, при повторяющемся — пересмотреть число сотрудников следующих смен</button>
-              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Одного периода недостаточно, чтобы сокращать команду. Сначала выясни по прошлым периодам, повторяется ли снижение.">Сразу сократить число сотрудников на смене: текущий ITPH ниже плана и очереди пока нет</button>
-              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Задачи по подготовке подходят при разовом снижении. Сначала сравни ITPH с прошлыми периодами.">Сразу перевести свободных сотрудников на подготовку, сохранив график до конца смены</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="1">Проанализировать прошлые периоды: при разовом снижении использовать время на перерывы, подготовку и чистоту; при повторении — скорректировать часы смены без ущерба следующей смене</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Одного периода недостаточно, чтобы сокращать часы. Сначала проанализируй прошлые периоды и пойми, повторяется ли снижение.">Сразу сократить количество часов на смене: текущий ITPH ниже плана и очереди пока нет</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Подготовка и чистота подходят при разовом снижении. Сначала проанализируй прошлые периоды и проверь динамику.">Сразу перевести свободных сотрудников на подготовку, не анализируя прошлые периоды</button>
             </div>
             <div class="ku-feedback" id="situation-underload-feedback" aria-live="polite"></div>
           </article>
@@ -264,7 +264,7 @@
             <div class="ku-choices">
               <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="Главный сигнал здесь — рост жалоб. Перевод на выдачу не устранит ошибки приготовления или сборки.">Перевести сотрудника на выдачу, чтобы сократить ожидание, а причины жалоб разобрать после пика</button>
               <button class="ku-choice situation-choice" type="button" data-correct="0" data-feedback="ITPH уже соответствует плану. Дополнительный сотрудник не решит проблему, пока не найдена причина жалоб.">Увеличить число сотрудников на кухне, чтобы снизить нагрузку, не проверяя причины жалоб</button>
-              <button class="ku-choice situation-choice" type="button" data-correct="1">Проверить приготовление и сборку заказов, найти нарушения стандартов и устранить их причины</button>
+              <button class="ku-choice situation-choice" type="button" data-correct="1">Проанализировать конкретный отзыв, найти корневую причину недовольства, исправить её и проверить результат</button>
             </div>
             <div class="ku-feedback" id="situation-quality-feedback" aria-live="polite"></div>
           </article>
@@ -355,6 +355,6 @@
 
   <script src="js/kuds.js?v=20260807-1"></script>
   <script src="js/ku-scorm.js?v=20260807-1"></script>
-  <script src="js/course.js?v=20260918-5"></script>
+  <script src="js/course.js?v=20260918-6"></script>
 </body>
 </html>
