@@ -57,9 +57,9 @@
     overload: "Высокий ITPH вместе с очередью и отставанием кухни указывает на перегрузку. Определи западающую зону и скорректируй расстановку.",
     underload: "Сначала сравни ITPH с прошлыми периодами. При разовом снижении дай задачи по подготовке и уборке, сохранив готовность обслуживать Гостей. Если снижение повторяется, скорректируй численность или график.",
     quality: "Нормальный ITPH не исключает проблем с качеством. Проверь процесс приготовления, сборки и соблюдение стандартов.",
-    absence: "Сначала проверь, кто вышел и как загружены станции. Скорректируй расстановку с учётом навыков сотрудников и организуй замену по принятому порядку. Для ITPH используй фактические часы работающих сотрудников.",
+    absence: "Сначала проверь, кто вышел и как загружены станции. Скорректируй расстановку с учётом навыков сотрудников и организуй замену по принятому порядку.",
     equipment: "Причина задержек — поломка фритюрницы. Прекрати её использование, сообщи ответственному по принятому порядку и приостанови продажу блюд, которые невозможно приготовить. Уточни у Гостей замену для уже принятых заказов.",
-    trainee: "Новичку нужны показ стандарта и помощь опытного сотрудника. Проверь следующие заказы: одинаковый с планом ITPH не гарантирует правильную сборку."
+    recovery: "ITPH вернулся к плану, а очередь сокращается — изменение сработало. Проверь качество и сохрани расстановку. Через час снова оцени ITPH, очередь и качество."
   };
   const periodCount = document.querySelectorAll(".period-row").length;
   const situationCount = Object.keys(situationFeedback).length;
@@ -84,6 +84,7 @@
       situations: [],
       attempts: {},
       order: ["act", "calculate", "review", "observe", "compare"],
+      orderAnswers: {},
       orderDone: false,
       completed: false
     };
@@ -113,6 +114,7 @@
             .map(([id, count]) => [id, Math.min(Math.max(Number(count) || 0, 0), 3)])
         ),
         order: Array.isArray(saved.order) && saved.order.length === correctOrder.length && new Set(saved.order).size === correctOrder.length && saved.order.every(id => correctOrder.includes(id)) ? saved.order : fresh.order,
+        orderAnswers: saved.orderAnswers && typeof saved.orderAnswers === "object" ? saved.orderAnswers : {},
         orderDone: Boolean(saved.orderDone),
         completed: Boolean(saved.completed && saved.orderDone)
       };
@@ -282,11 +284,7 @@
 
     if (attempts >= 3) {
       const allDone = resolvePeriod(row, currentIndex, true);
-      showFeedback(
-        "calc-feedback",
-        true,
-        "<strong>Разбор после трёх попыток.</strong> " + row.dataset.setup + " = " + row.dataset.answer + ". Эталонный расчёт и решение подставлены в поля. " + (allDone ? "Можно переходить к ситуациям." : "Следующий период открыт.")
-      );
+      showFeedback("calc-feedback", true, allDone ? "Ответ открыт в строке. Можно переходить к ситуациям." : "Ответ открыт в строке. Следующий период открыт.");
       return;
     }
 
@@ -355,7 +353,7 @@
           card,
           id,
           feedbackId,
-          "<strong>Разбор после трёх попыток.</strong> " + situationFeedback[id] + " Правильный вариант отмечен — можно идти дальше."
+          "<strong>Почему этот вариант не подходит:</strong> " + button.dataset.feedback + " <strong>Правильный разбор:</strong> " + situationFeedback[id]
         );
         return;
       }
@@ -365,7 +363,7 @@
       showFeedback(
         feedbackId,
         false,
-        "<strong>Не совсем.</strong> Сопоставь факт с планом, а затем учти загрузку команды, состояние оборудования и опыт Гостей. " + attemptsText
+        "<strong>Почему этот вариант не подходит:</strong> " + button.dataset.feedback + " " + attemptsText
       );
       return;
     }
@@ -422,91 +420,29 @@
     if (caption) caption.textContent = select.value ? select.options[select.selectedIndex].textContent : "";
   }
 
-  function beginOrderDrag(event, item, list) {
-    if (state.orderDone || !state.done[1] || event.button !== 0) return;
-    event.preventDefault();
-    const pointerId = event.pointerId;
-    const stepId = item.dataset.step;
-    item.classList.add("is-dragging");
-    list.setPointerCapture(pointerId);
-    const announce = document.getElementById("order-announcement");
-    function move(e) {
-      if (e.pointerId !== pointerId) return;
-      const before = [...list.children].find(card => {
-        if (card === item) return false;
-        const rect = card.getBoundingClientRect();
-        return e.clientY < rect.top + rect.height / 2;
-      });
-      list.insertBefore(item, before || null);
-      if (e.clientY < 100) window.scrollBy(0, -18);
-      else if (e.clientY > window.innerHeight - 100) window.scrollBy(0, 18);
-      announce.textContent = "Позиция: " + ([...list.children].indexOf(item) + 1) + " из " + state.order.length;
-    }
-    function finish(e) {
-      if (e.pointerId !== pointerId) return;
-      list.removeEventListener("pointermove", move);
-      list.removeEventListener("pointerup", finish);
-      list.removeEventListener("pointercancel", cancel);
-      list.removeEventListener("lostpointercapture", cancel);
-      if (list.hasPointerCapture(pointerId)) list.releasePointerCapture(pointerId);
-      if (e.type === "pointerup") {
-        state.order = [...list.children].map(card => card.dataset.step);
-        saveState();
-        document.getElementById("order-feedback").classList.remove("show");
-      }
-      restoreOrder();
-      list.querySelector('[data-step="' + stepId + '"] .action-order__handle').focus({ preventScroll: true });
-      announce.textContent = e.type === "pointerup" ? "Шаг перемещён на позицию " + (state.order.indexOf(stepId) + 1) + "." : "Перемещение отменено.";
-    }
-    function cancel(e) { finish(e); }
-    list.addEventListener("pointermove", move);
-    list.addEventListener("pointerup", finish);
-    list.addEventListener("pointercancel", cancel);
-    list.addEventListener("lostpointercapture", cancel);
-  }
-
   function restoreOrder() {
     const list = document.getElementById("action-order");
     list.innerHTML = "";
-    state.order.forEach((id, index) => {
-      const item = document.createElement("li");
+    state.order.forEach(id => {
+      const item = document.createElement("div");
+      item.className = "action-order__item";
       item.dataset.step = id;
-      const handle = document.createElement("button");
-      handle.type = "button";
-      handle.className = "action-order__handle";
-      handle.textContent = "⠿";
-      handle.setAttribute("aria-label", "Перетащить шаг. Для клавиатуры используй кнопки выше и ниже: " + actionSteps[id]);
-      handle.disabled = state.orderDone || !state.done[1];
-      handle.addEventListener("pointerdown", event => beginOrderDrag(event, item, list));
-      item.appendChild(handle);
+      const select = document.createElement("select");
+      select.className = "ku-input action-order__number";
+      select.setAttribute("aria-label", "Номер шага: " + actionSteps[id]);
+      select.disabled = state.orderDone || !state.done[1];
+      select.innerHTML = '<option value="">№</option>' + correctOrder.map((_, index) => '<option value="' + (index + 1) + '">' + (index + 1) + '</option>').join("");
+      select.value = state.orderAnswers[id] || "";
+      select.addEventListener("change", () => {
+        state.orderAnswers[id] = select.value;
+        saveState();
+        document.getElementById("order-feedback").classList.remove("show");
+      });
+      item.appendChild(select);
       const label = document.createElement("span");
       label.className = "action-order__text";
       label.textContent = actionSteps[id];
       item.appendChild(label);
-      const controls = document.createElement("div");
-      controls.className = "action-order__buttons";
-      [-1, 1].forEach(direction => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "ku-btn ghost";
-        button.textContent = direction < 0 ? "↑ Выше" : "↓ Ниже";
-        button.setAttribute("aria-label", button.textContent + ": " + actionSteps[id]);
-        button.dataset.step = id;
-        button.dataset.direction = direction;
-        button.disabled = state.orderDone || !state.done[1] || index + direction < 0 || index + direction >= state.order.length;
-        button.addEventListener("click", () => {
-          const target = index + direction;
-          [state.order[index], state.order[target]] = [state.order[target], state.order[index]];
-          saveState();
-          restoreOrder();
-          document.getElementById("order-feedback").classList.remove("show");
-          const movedButtons = [...list.querySelectorAll("button")].filter(b => b.dataset.step === id && !b.disabled);
-          const focusTarget = movedButtons.find(b => b.dataset.direction === String(direction)) || movedButtons[0];
-          if (focusTarget) focusTarget.focus();
-        });
-        controls.appendChild(button);
-      });
-      item.appendChild(controls);
       list.appendChild(item);
     });
     document.getElementById("algorithm-reference").hidden = !state.orderDone;
@@ -516,9 +452,18 @@
 
   window.checkActionOrder = function () {
     if (!state.done[1] || state.orderDone) return;
-    const firstWrong = state.order.findIndex((id, index) => id !== correctOrder[index]);
+    const selected = correctOrder.map(id => String(state.orderAnswers[id] || ""));
+    if (selected.some(value => !value)) {
+      showFeedback("order-feedback", false, "Выбери номер для каждого действия.");
+      return;
+    }
+    if (new Set(selected).size !== correctOrder.length) {
+      showFeedback("order-feedback", false, "Каждый номер можно использовать только один раз.");
+      return;
+    }
+    const firstWrong = correctOrder.findIndex((id, index) => selected[index] !== String(index + 1));
     if (firstWrong !== -1) {
-      showFeedback("order-feedback", false, "<strong>Проверь шаг " + (firstWrong + 1) + ".</strong> Сначала нужны расчёт и сравнение с планом, затем наблюдение и действие. Оценка результата — в конце.");
+      showFeedback("order-feedback", false, "Порядок пока неверный. Начни с расчёта ITPH, а проверку результата поставь последней.");
       return;
     }
     state.orderDone = true;
