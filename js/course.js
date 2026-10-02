@@ -109,6 +109,13 @@
     [1, 2, 0, 3]
   ];
   const correctOrder = Object.keys(actionSteps);
+  const correctStepNumbers = {
+    calculate: "1",
+    compare: "2",
+    observe: "3",
+    act: "4",
+    review: "5"
+  };
   const originalNavigate = window.kuNavigate;
   let state = loadState();
 
@@ -123,6 +130,7 @@
       attempts: {},
       order: ["act", "calculate", "review", "observe", "compare"],
       orderAnswers: {},
+      orderAttempts: 0,
       orderDone: false,
       completed: false
     };
@@ -153,6 +161,7 @@
         ),
         order: Array.isArray(saved.order) && saved.order.length === correctOrder.length && new Set(saved.order).size === correctOrder.length && saved.order.every(id => correctOrder.includes(id)) ? saved.order : fresh.order,
         orderAnswers: saved.orderAnswers && typeof saved.orderAnswers === "object" ? saved.orderAnswers : {},
+        orderAttempts: Math.min(Math.max(Number(saved.orderAttempts) || 0, 0), 2),
         orderDone: Boolean(saved.orderDone),
         completed: Boolean(saved.completed && saved.orderDone)
       };
@@ -544,7 +553,7 @@
 
   window.checkActionOrder = function () {
     if (!state.done[1] || state.orderDone) return;
-    const selected = correctOrder.map(id => String(state.orderAnswers[id] || ""));
+    const selected = state.order.map(id => String(state.orderAnswers[id] || ""));
     if (selected.some(value => !value)) {
       showFeedback("order-feedback", false, "Выбери номер для каждого действия.");
       return;
@@ -553,12 +562,24 @@
       showFeedback("order-feedback", false, "Каждый номер можно использовать только один раз.");
       return;
     }
-    const firstWrong = correctOrder.findIndex((id, index) => selected[index] !== String(index + 1));
-    if (firstWrong !== -1) {
-      showFeedback("order-feedback", false, "Порядок пока неверный. Начни с расчёта ITPH, а проверку результата поставь последней.");
+    const isCorrect = state.order.every(id => String(state.orderAnswers[id]) === correctStepNumbers[id]);
+    if (!isCorrect) {
+      state.orderAttempts = Math.min(state.orderAttempts + 1, 2);
+      if (state.orderAttempts === 1) {
+        saveState();
+        showFeedback("order-feedback", false, "<strong>Попробуй ещё раз.</strong> Сначала рассчитай ITPH и сопоставь его с планом. После действия обязательно проверь результат. Осталась 1 попытка.");
+        return;
+      }
+      state.orderAnswers = { ...correctStepNumbers };
+      state.orderDone = true;
+      markExerciseDone("action-order");
+      saveState();
+      syncUi();
+      showFeedback("order-feedback", false, "<strong>Тренажёр завершён.</strong> Правильный порядок показан ниже: рассчитай → сопоставь → найди причину → действуй → проверь результат.");
       return;
     }
     state.orderDone = true;
+    state.orderAttempts = Math.min(state.orderAttempts + 1, 2);
     markExerciseDone("action-order");
     saveState();
     syncUi();
